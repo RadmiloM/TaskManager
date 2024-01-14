@@ -20,6 +20,7 @@ public class Task {
     }
 
     public Task() {
+
     }
 
     public Long getId() {
