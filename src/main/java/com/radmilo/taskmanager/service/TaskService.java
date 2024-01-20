@@ -1,6 +1,7 @@
 package com.radmilo.taskmanager.service;
 
 import com.radmilo.taskmanager.entity.Task;
+import com.radmilo.taskmanager.exception.TaskNotFoundException;
 import com.radmilo.taskmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,11 @@ public class TaskService {
     }
 
     public Task fetchTaskById(Long id) {
-        return taskRepository.findById(id).get();
+        Optional<Task> optionalTask = taskRepository.findById(id);
+        if(optionalTask.isEmpty()){
+            throw new TaskNotFoundException("Task with id: " + id + " was not found");
+        }
+        return optionalTask.get();
     }
 
     public List<Task> fetchTasks(){
@@ -29,12 +34,19 @@ public class TaskService {
     }
 
     public void deleteTask(Long id){
+        Optional<Task> optionalTask = taskRepository.findById(id);
+        if(optionalTask.isEmpty()){
+            throw new TaskNotFoundException("Task with id: " + id + " was not found");
+        }
         taskRepository.deleteById(id);
     }
 
     public void updateTask(Long id, Task updatedTask){
-        Optional<Task> taskDB = taskRepository.findById(id);
-        Task foundTask = taskDB.get();
+        Optional<Task> optionalTask = taskRepository.findById(id);
+        if(optionalTask.isEmpty()){
+            throw new TaskNotFoundException("Task with id: " + id + " was not found");
+        }
+        Task foundTask = optionalTask.get();
         if(updatedTask.getTitle() != null && !updatedTask.getTitle().equals("")){
             foundTask.setTitle(updatedTask.getTitle());
         }
