@@ -1,4 +1,4 @@
-package com.radmilo.taskmanager.command;
+package com.radmilo.taskmanager.bootstrap;
 
 import com.radmilo.taskmanager.entity.Task;
 import com.radmilo.taskmanager.repository.TaskRepository;
@@ -6,10 +6,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TaskCommand implements CommandLineRunner {
+public class TaskBootstrap implements CommandLineRunner {
     private final TaskRepository taskRepository;
 
-    public TaskCommand(TaskRepository taskRepository) {
+    public TaskBootstrap(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
