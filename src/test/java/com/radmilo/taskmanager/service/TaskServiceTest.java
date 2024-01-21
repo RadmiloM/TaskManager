@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
@@ -19,13 +18,11 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
-
     @Mock
     TaskRepository taskRepository;
     @InjectMocks
     TaskService taskService;
     Task task;
-
     Long id;
 
     @BeforeEach
@@ -53,7 +50,7 @@ class TaskServiceTest {
     @Test
     void TaskService_FetchTaskByIdWhenIdIsNotPresent_ShouldHandleMethodFetchTaskById() {
         when(taskRepository.findById(eq(22L))).thenReturn(Optional.ofNullable(null));
-        assertThrows(TaskNotFoundException.class, ()-> {
+        assertThrows(TaskNotFoundException.class, () -> {
             taskService.fetchTaskById(22L);
         });
         verify(taskRepository).findById(eq(22L));
@@ -76,11 +73,12 @@ class TaskServiceTest {
         verify(taskRepository).findById(id);
         verify(taskRepository).deleteById(id);
     }
+
     @Test
     void TaskService_DeleteTask_ShouldHandleMethodDeleteTask() {
         when(taskRepository.findById(eq(13L))).thenReturn(Optional.ofNullable(null));
         assertThrows(TaskNotFoundException.class,
-                ()-> taskService.deleteTask(13L));
+                () -> taskService.deleteTask(13L));
         verify(taskRepository).findById(eq(13L));
     }
 
@@ -89,14 +87,14 @@ class TaskServiceTest {
         when(taskRepository.findById(anyLong())).thenReturn(Optional.of(task));
         taskService.updateTask(id, task);
         verify(taskRepository).save(task);
-
     }
+
     @Test
     void TaskService_UpdateTask_ShouldSuccessfullyHandleMethodUpdateTask() {
         when(taskRepository.findById(eq(14L))).thenReturn(Optional.ofNullable(null));
         assertThrows(TaskNotFoundException.class,
-                ()-> taskService.updateTask(14L,task));
+                () -> taskService.updateTask(14L, task));
         verify(taskRepository).findById(eq(14L));
-
     }
+
 }
