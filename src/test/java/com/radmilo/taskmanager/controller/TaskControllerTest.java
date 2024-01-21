@@ -15,7 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,31 +33,37 @@ class TaskControllerTest {
     @Autowired
     private MockMvc mockMvc;
     Task task;
+    Task readingTask;
     Long id;
     List<Task> tasks;
     TaskDTO taskDTO;
+    List<TaskDTO> taskDTOS;
 
     @BeforeEach
     void setUp() {
         task = new Task();
         task.setTitle("Write");
         task.setDescription("Write every day");
+        readingTask = new Task();
+        readingTask.setTitle("Reading");
+        readingTask.setDescription("Reading every day");
         id = 1L;
         tasks = new ArrayList<>();
-        taskDTO = new TaskDTO("Work","Work every day");
+        taskDTO = new TaskDTO("Work", "Work every day");
+        taskDTOS = new ArrayList<>();
     }
 
     @Test
     void TaskController_SaveTask_ShouldSuccessfullySaveTask() throws Exception {
-            when(taskConverter.mapToEntity(any(TaskDTO.class))).thenReturn(task);
-            when(taskService.saveTask(any(Task.class))).thenReturn(task);
-            mockMvc.perform(post("/api/v1/tasks")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"title\": \"Listen\", " +
-                            "\"description\": \"Listen every day\"}"))
-                    .andDo(print())
-                    .andExpect(status().isCreated())
-                    .andExpect(header().string("Location", "http://localhost/api/v1/tasks/"));
+        when(taskConverter.mapToEntity(any(TaskDTO.class))).thenReturn(task);
+        when(taskService.saveTask(any(Task.class))).thenReturn(task);
+        mockMvc.perform(post("/api/v1/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"Listen\", " +
+                                "\"description\": \"Listen every day\"}"))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/api/v1/tasks/"));
     }
 
     @Test
@@ -74,25 +81,22 @@ class TaskControllerTest {
 
     @Test
     void TaskController_FetchTasks_ShouldReturnTasksSuccessfully() throws Exception {
-        Task readingTask = new Task();
-        readingTask.setTitle("Reading");
-        readingTask.setDescription("Reading every day");
         tasks.add(task);
         tasks.add(readingTask);
+        taskDTOS.add(taskDTO);
         when(taskService.fetchTasks()).thenReturn(tasks);
+        when(taskConverter.mapToDTO(tasks)).thenReturn(taskDTOS);
         mockMvc.perform(get("/api/v1/tasks"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("Write"))
-                .andExpect(jsonPath("$[0].description").value("Write every day"))
-                .andExpect(jsonPath("$[1].title").value("Reading"))
-                .andExpect(jsonPath("$[1].description").value("Reading every day"));
+                .andExpect(jsonPath("$[0].title").value("Work"))
+                .andExpect(jsonPath("$[0].description").value("Work every day"));
 
     }
 
     @Test
     void TaskController_DeleteTaskById_ShouldSuccessfullyDeleteTaskById() throws Exception {
-        mockMvc.perform(delete("/api/v1/tasks/{id}",id))
+        mockMvc.perform(delete("/api/v1/tasks/{id}", id))
                 .andDo(print())
                 .andExpect(status().isNoContent());
         verify(taskService).deleteTask(id);
@@ -100,12 +104,12 @@ class TaskControllerTest {
 
     @Test
     void TaskController_UpdateTaskById_ShouldSuccessfullyUpdateTask() throws Exception {
-        mockMvc.perform(put("/api/v1/tasks/{id}",id)
+        mockMvc.perform(put("/api/v1/tasks/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"Watch\", \"description\": \"Watch tutorial every day\"}"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        verify(taskService).updateTask(anyLong(),any(Task.class));
+        verify(taskService).updateTask(anyLong(), any(Task.class));
     }
 
 }
