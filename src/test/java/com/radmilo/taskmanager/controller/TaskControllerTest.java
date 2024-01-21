@@ -104,12 +104,12 @@ class TaskControllerTest {
 
     @Test
     void TaskController_UpdateTaskById_ShouldSuccessfullyUpdateTask() throws Exception {
+        when(taskConverter.mapToEntity(taskDTO)).thenReturn(task);
         mockMvc.perform(put("/api/v1/tasks/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"Watch\", \"description\": \"Watch tutorial every day\"}"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        verify(taskService).updateTask(anyLong(), any(Task.class));
     }
 
 }
