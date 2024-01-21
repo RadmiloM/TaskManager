@@ -1,5 +1,7 @@
 package com.radmilo.taskmanager.controller;
 
+import com.radmilo.taskmanager.converter.TaskConverter;
+import com.radmilo.taskmanager.dto.TaskDTO;
 import com.radmilo.taskmanager.entity.Task;
 import com.radmilo.taskmanager.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TaskControllerTest {
     @MockBean
     private TaskService taskService;
+    @MockBean
+    private TaskConverter taskConverter;
     @Autowired
     private MockMvc mockMvc;
     Task task;
@@ -42,6 +46,7 @@ class TaskControllerTest {
 
     @Test
     void TaskController_SaveTask_ShouldSuccessfullySaveTask() throws Exception {
+            when(taskConverter.mapToEntity(any(TaskDTO.class))).thenReturn(task);
             when(taskService.saveTask(any(Task.class))).thenReturn(task);
             mockMvc.perform(post("/api/v1/tasks")
                     .contentType(MediaType.APPLICATION_JSON)
