@@ -1,7 +1,10 @@
 package com.radmilo.taskmanager.controller;
 
+import com.radmilo.taskmanager.converter.TaskConverter;
+import com.radmilo.taskmanager.dto.TaskDTO;
 import com.radmilo.taskmanager.entity.Task;
 import com.radmilo.taskmanager.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +18,16 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+    private final TaskConverter taskConverter;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, TaskConverter taskConverter) {
         this.taskService = taskService;
+        this.taskConverter = taskConverter;
     }
 
     @PostMapping(path = "/tasks")
-    public ResponseEntity<Void> saveTask(@RequestBody Task task) {
+    public ResponseEntity<Void> saveTask(@Valid @RequestBody TaskDTO taskDTO) {
+        Task task = taskConverter.mapToEntity(taskDTO);
         Task savedTask = taskService.saveTask(task);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
