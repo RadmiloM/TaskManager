@@ -58,8 +58,9 @@ public class TaskController {
     }
 
     @PutMapping(path = "/tasks/{id}")
-    public ResponseEntity<Void> updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
-        taskService.updateTask(id, updatedTask);
+    public ResponseEntity<Void> updatedTask(@PathVariable Long id, @Valid @RequestBody TaskDTO updatedTask) {
+        Task task = taskConverter.mapToEntity(updatedTask);
+        taskService.updateTask(id, task);
         return ResponseEntity.noContent().build();
     }
 }
