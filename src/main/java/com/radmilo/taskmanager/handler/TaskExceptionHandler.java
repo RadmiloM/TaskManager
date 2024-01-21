@@ -1,4 +1,4 @@
-package com.radmilo.taskmanager.exceptionhandler;
+package com.radmilo.taskmanager.handler;
 
 import com.radmilo.taskmanager.exception.TaskNotFoundException;
 import org.springframework.http.HttpHeaders;
