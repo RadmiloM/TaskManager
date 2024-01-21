@@ -45,8 +45,10 @@ public class TaskController {
     }
 
     @GetMapping(path = "/tasks")
-    public ResponseEntity<List<Task>> fetchTasks() {
-        return new ResponseEntity<>(taskService.fetchTasks(), HttpStatus.OK);
+    public ResponseEntity<List<TaskDTO>> fetchTasks() {
+        List<Task> tasks = taskService.fetchTasks();
+        List<TaskDTO> taskDTOS = taskConverter.mapToDTO(tasks);
+        return new ResponseEntity<>(taskDTOS, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/tasks/{id}")
