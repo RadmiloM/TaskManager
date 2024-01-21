@@ -47,10 +47,10 @@ public class TaskService {
             throw new TaskNotFoundException("Task with id: " + id + " was not found");
         }
         Task foundTask = optionalTask.get();
-        if(updatedTask.getTitle() != null && !updatedTask.getTitle().equals("")){
+        if(updatedTask.getTitle() != null && !updatedTask.getTitle().isEmpty()){
             foundTask.setTitle(updatedTask.getTitle());
         }
-        if(updatedTask.getDescription() != null && !updatedTask.getDescription().equals("")){
+        if(updatedTask.getDescription() != null && !updatedTask.getDescription().isEmpty()){
             foundTask.setDescription(updatedTask.getDescription());
         }
         taskRepository.save(foundTask);
