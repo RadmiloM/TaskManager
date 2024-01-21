@@ -38,8 +38,10 @@ public class TaskController {
     }
 
     @GetMapping(path = "/tasks/{id}")
-    public ResponseEntity<Task> fetchTaskById(@PathVariable Long id) {
-        return new ResponseEntity<>(taskService.fetchTaskById(id), HttpStatus.OK);
+    public ResponseEntity<TaskDTO> fetchTaskById(@PathVariable Long id) {
+        Task task = taskService.fetchTaskById(id);
+        TaskDTO taskDTO = taskConverter.mapToDTO(task);
+        return new ResponseEntity<>(taskDTO, HttpStatus.OK);
     }
 
     @GetMapping(path = "/tasks")
