@@ -34,6 +34,7 @@ class TaskControllerTest {
     Task task;
     Long id;
     List<Task> tasks;
+    TaskDTO taskDTO;
 
     @BeforeEach
     void setUp() {
@@ -42,6 +43,7 @@ class TaskControllerTest {
         task.setDescription("Write every day");
         id = 1L;
         tasks = new ArrayList<>();
+        taskDTO = new TaskDTO("Work","Work every day");
     }
 
     @Test
@@ -59,13 +61,14 @@ class TaskControllerTest {
 
     @Test
     void TaskController_FetchTaskById_ShouldFindTaskWithId() throws Exception {
-        when(taskService.fetchTaskById(id)).thenReturn(task);
+        when(taskService.fetchTaskById(anyLong())).thenReturn(task);
+        when(taskConverter.mapToDTO(task)).thenReturn(taskDTO);
         mockMvc.perform(get("/api/v1/tasks/{id}", id)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Write"))
-                .andExpect(jsonPath("$.description").value("Write every day"));
+                .andExpect(jsonPath("$.title").value("Work"))
+                .andExpect(jsonPath("$.description").value("Work every day"));
 
     }
 
