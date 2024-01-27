@@ -1,5 +1,6 @@
 package com.radmilo.taskmanager.handler;
 
+import com.radmilo.taskmanager.error.Errors;
 import com.radmilo.taskmanager.exception.TaskNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,17 +27,17 @@ public class TaskExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers,
-                                                                  HttpStatusCode status,
-                                                                  WebRequest request) {
-        List<Map<String, String>> taskErrors = new ArrayList<>();
-        Map<String, String> errors = new HashMap<>();
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                               HttpHeaders headers,
+                                                               HttpStatusCode status,
+                                                               WebRequest request) {
+        List<Errors> taskErrors = new ArrayList<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage());
+            taskErrors.add(new Errors(error.getField(), error.getDefaultMessage()));
         }
-        taskErrors.add(errors);
-        return new ResponseEntity<>(taskErrors, HttpStatus.BAD_REQUEST);
+        Map<String, List<Errors>> taskErrorsResponse = new HashMap<>();
+        taskErrorsResponse.put("Errors", taskErrors);
+        return new ResponseEntity<>(taskErrorsResponse, HttpStatus.BAD_REQUEST);
     }
 
 }
