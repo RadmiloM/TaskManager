@@ -1,9 +1,7 @@
 package com.radmilo.taskmanager.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.radmilo.taskmanager.enumeration.Role;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
@@ -14,13 +12,16 @@ public class User {
     private Long id;
     private String email;
     private String password;
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
 
-    public User(String email, String password) {
+    public User(String email, String password, Role role) {
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
-    public User(){
+    public User() {
 
     }
 
